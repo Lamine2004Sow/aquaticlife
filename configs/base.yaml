@@ -1,0 +1,22 @@
+defaults: []
+
+simulation:
+  dt: 0.02
+  episode_duration: 5.0
+  drag_root: 1.5
+  drag_coef: 2.5
+
+morphology:
+  min_segments: 2
+  max_segments: 8
+  length_range: [0.05, 0.2]
+  mass_range: [0.05, 0.8]
+  stiffness_range: [1.0, 20.0]
+  damping_range: [0.01, 1.0]
+  muscle_range: [0.1, 5.0]
+
+evolution:
+  population_size: 32
+  elite_fraction: 0.1
+  mutation_scale: 0.05
+  seed: 0

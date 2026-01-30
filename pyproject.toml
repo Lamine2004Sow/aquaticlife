@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aquaticlife"
+version = "0.0.1"
+description = "Co-evolution morphologie–contrôle dans un fluide 2D"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [{name = "Projet M2"}]
+dependencies = [
+    "numpy>=1.24",
+]
+
+[project.optional-dependencies]
+rl = ["torch>=2.0; extra == 'rl'"]
+viz = ["matplotlib>=3.8", "imageio>=2.34"]
+dev = ["pytest>=7.4"]
+
+[tool.setuptools.packages.find]
+where = ["."]

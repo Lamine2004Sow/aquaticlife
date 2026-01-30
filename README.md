@@ -25,3 +25,19 @@ Mettre en évidence comment des formes et des rythmes de nage émergent d’une 
 3) Boucle d’apprentissage (RL + évolution morphologique).
 4) Visualisations : trajectoires, morphologies, heatmaps d’efficacité.
 5) Expériences et comparaisons RL vs neuro-évolution.
+
+## Démarrage rapide (prototype GA)
+```bash
+python -m venv .venv && source .venv/bin/activate
+pip install -e .
+python scripts/evolve.py
+```
+
+## Arborescence
+- `aquaticlife/physics/` : segments, joints, drag.
+- `aquaticlife/envs/` : environnement gym-like.
+- `aquaticlife/control/` : contrôleurs neuronaux (NumPy pour l’instant).
+- `aquaticlife/evolution/` : GA minimal pour la morphologie.
+- `scripts/` : exemples d’exécution.
+- `configs/` : paramètres par défaut (Hydra-ready).
+- `docs/` : spécification détaillée.
