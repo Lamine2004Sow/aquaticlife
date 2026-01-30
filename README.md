@@ -31,6 +31,8 @@ Mettre en évidence comment des formes et des rythmes de nage émergent d’une 
 python -m venv .venv && source .venv/bin/activate
 pip install -e .
 python scripts/evolve.py
+# ou pour le squelette RL :
+python scripts/train_rl.py
 ```
 
 ## Arborescence

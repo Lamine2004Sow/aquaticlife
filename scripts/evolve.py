@@ -16,6 +16,7 @@ import numpy as np
 from aquaticlife.control import RandomController
 from aquaticlife.envs import SwimEnv, SwimEnvConfig
 from aquaticlife.evolution import GAConfig, GeneticAlgorithm
+from aquaticlife.experiments import rollout_episode
 from aquaticlife.physics.fluid import FluidModel
 from aquaticlife.utils import log_metrics
 
@@ -24,16 +25,8 @@ def make_fitness_fn(fluid: FluidModel) -> callable:
     def fitness(morpho, idx: int) -> float:
         env = SwimEnv(morpho, fluid, SwimEnvConfig())
         ctrl = RandomController(action_dim=morpho.num_segments - 1)
-        obs = env.reset(seed=idx)
-        total = 0.0
-        done = False
-        steps = 0
-        while not done:
-            action = ctrl(obs)
-            obs, reward, done, info = env.step(action)
-            total += reward
-            steps += 1
-        return total / steps
+        stats = rollout_episode(env, ctrl, seed=idx)
+        return stats.reward / stats.steps
 
     return fitness
 
