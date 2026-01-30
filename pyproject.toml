@@ -15,9 +15,9 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-rl = ["torch>=2.0; extra == 'rl'"]
-viz = ["matplotlib>=3.8", "imageio>=2.34"]
-dev = ["pytest>=7.4"]
+rl = ["torch>=2.2"]
+viz = ["matplotlib>=3.8", "imageio>=2.34", "pygame>=2.5"]
+dev = ["pytest>=7.4", "pytest-cov>=4.1"]
 
 [tool.setuptools.packages.find]
 where = ["."]

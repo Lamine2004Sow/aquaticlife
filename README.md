@@ -31,8 +31,12 @@ Mettre en évidence comment des formes et des rythmes de nage émergent d’une 
 python -m venv .venv && source .venv/bin/activate
 pip install -e .
 python scripts/evolve.py
-# ou pour le squelette RL :
+# PPO minimal (nécessite torch) :
+pip install -e '.[rl]'
 python scripts/train_rl.py
+# Visualisation temps réel (pygame) :
+pip install -e '.[viz]'
+python scripts/viewer.py
 ```
 
 ## Arborescence
@@ -40,6 +44,8 @@ python scripts/train_rl.py
 - `aquaticlife/envs/` : environnement gym-like.
 - `aquaticlife/control/` : contrôleurs neuronaux (NumPy pour l’instant).
 - `aquaticlife/evolution/` : GA minimal pour la morphologie.
+- `aquaticlife/rl/` : agent PPO torch.
+- `aquaticlife/visualization/` : viewer pygame temps réel.
 - `scripts/` : exemples d’exécution.
 - `configs/` : paramètres par défaut (Hydra-ready).
 - `docs/` : spécification détaillée.

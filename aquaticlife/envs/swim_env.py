@@ -32,6 +32,8 @@ class SwimEnv:
         self.max_steps = int(self.cfg.episode_duration / self.cfg.dt)
         self.step_count = 0
         self.root_vel = np.zeros(2, dtype=np.float32)
+        self.prev_positions = self.body.forward_kinematics()
+        self.action_dim = self.body.params.num_segments - 1
 
     def reset(self, seed: int | None = None) -> np.ndarray:
         if seed is not None:
@@ -40,9 +42,11 @@ class SwimEnv:
         self.root_vel[:] = 0.0
         self.time = 0.0
         self.step_count = 0
+        self.prev_positions = self.body.forward_kinematics()
         return self._get_obs()
 
     def step(self, action: np.ndarray) -> Tuple[np.ndarray, float, bool, Dict]:
+        pos_prev = self.prev_positions
         # Torques articulaires
         muscle_torques = self.body.apply_muscle_torques(action)
         drag_torques = self.fluid.drag_torque(self.body.angular_vel, self.body.params.lengths)
@@ -53,9 +57,19 @@ class SwimEnv:
         heading = np.array([np.cos(self.body.root_theta), np.sin(self.body.root_theta)], dtype=np.float32)
         propulsion = 0.6 * osc_amp * heading
 
-        drag_root = -self.cfg.drag_root * (self.root_vel - self.fluid.current)
+        current_here = self.fluid.current_at(self.body.root_pos, self.time)
+        drag_root = -self.cfg.drag_root * (self.root_vel - current_here)
         self.root_vel += (propulsion + drag_root) * self.cfg.dt
         self.body.root_pos += self.root_vel * self.cfg.dt
+
+        # Met à jour les positions et calcule vitesse des segments pour informations
+        pos_new = self.body.forward_kinematics()
+        seg_vel = (pos_new - pos_prev) / self.cfg.dt
+        drag_segments = self.fluid.drag_force(seg_vel, pos_new, self.time)
+        net_drag_acc = drag_segments.sum(axis=0) / max(float(np.sum(self.body.params.masses)), 1e-3)
+        self.root_vel += net_drag_acc * self.cfg.dt
+        self.body.root_pos += net_drag_acc * (self.cfg.dt**2)
+        self.prev_positions = pos_new
 
         self.time += self.cfg.dt
         self.step_count += 1
@@ -71,7 +85,7 @@ class SwimEnv:
                 self.body.angles,
                 self.body.angular_vel,
                 self.root_vel,
-                self.fluid.current,
+                self.fluid.current_at(self.body.root_pos, self.time),
             ]
         ).astype(np.float32)
 
