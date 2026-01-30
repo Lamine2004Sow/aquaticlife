@@ -60,6 +60,7 @@ class SwimEnv:
         current_here = self.fluid.current_at(self.body.root_pos, self.time)
         drag_root = -self.cfg.drag_root * (self.root_vel - current_here)
         self.root_vel += (propulsion + drag_root) * self.cfg.dt
+        self.root_vel = np.clip(self.root_vel, -5.0, 5.0)
         self.body.root_pos += self.root_vel * self.cfg.dt
 
         # Met à jour les positions et calcule vitesse des segments pour informations
@@ -75,6 +76,11 @@ class SwimEnv:
         self.step_count += 1
 
         obs = self._get_obs()
+        if not np.isfinite(obs).all():
+            # Abort if divergence; return severe penalty
+            reward = -10.0
+            info = {"distance": float(self.body.root_pos[0]), "energy": 0.0, "instability": 0.0}
+            return obs * 0, reward, True, info
         reward, info = self._compute_reward(muscle_torques)
         done = self.step_count >= self.max_steps
         return obs, reward, done, info

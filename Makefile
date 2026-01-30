@@ -14,6 +14,7 @@ help:
 	@echo "  make install   - install package editable + deps"
 	@echo "  make install-rl  - install with RL extra (PyTorch)"
 	@echo "  make install-viz - install with viz extra (pygame)"
+	@echo "  make install-dev - install with dev extras (pytest...)"
 	@echo "  make evolve    - run GA prototype"
 	@echo "  make train     - run RL placeholder script"
 	@echo "  make view      - run pygame viewer (needs pygame)"
@@ -35,6 +36,10 @@ install-viz: venv
 	$(PYTHON) -m pip install --upgrade pip
 	$(PYTHON) -m pip install -e ".[viz]"
 
+install-dev: venv
+	$(PYTHON) -m pip install --upgrade pip
+	$(PYTHON) -m pip install -e ".[dev]"
+
 evolve: install
 	$(PYTHON) scripts/evolve.py
 
@@ -44,7 +49,7 @@ train: install-rl
 view: install-viz
 	$(PYTHON) scripts/viewer.py
 
-test: install
+test: install-dev
 	$(PYTHON) -m pytest
 
 clean:

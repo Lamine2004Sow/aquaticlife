@@ -34,9 +34,10 @@ class PygameViewer:
     def draw_body(self):
         positions = self.env.body.forward_kinematics()
         pts = [world_to_screen(p, self.scale, self.offset) for p in positions if np.isfinite(p).all()]
+        if len(pts) < 2:
+            return
         self.screen.fill((15, 18, 30))
-        if len(pts) >= 2:
-            pygame.draw.lines(self.screen, (70, 200, 255), False, pts, width=4)
+        pygame.draw.lines(self.screen, (70, 200, 255), False, pts, width=4)
         for p in pts:
             pygame.draw.circle(self.screen, (255, 255, 255), p, 5)
 
@@ -51,6 +52,8 @@ class PygameViewer:
                         sys.exit(0)
                 action = self.controller(obs)
                 obs, reward, done, info = self.env.step(action)
+                if not np.isfinite(obs).all():
+                    done = True
                 self.draw_body()
                 pygame.display.flip()
                 self.clock.tick(fps)

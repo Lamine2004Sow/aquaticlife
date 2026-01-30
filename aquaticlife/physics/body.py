@@ -98,10 +98,13 @@ class RigidSegmentChain:
         spring_torque = -stiffness * self.angles
         damper_torque = -damping * self.angular_vel
         total = muscle_torques + drag_torques + spring_torque + damper_torque
+        total = np.nan_to_num(total, nan=0.0, posinf=0.0, neginf=0.0)
         inertia = self.params.masses[:-1] * (self.params.lengths[:-1] ** 2)
         inertia = np.maximum(inertia, 1e-3)
         self.angular_vel += (total / inertia) * dt
+        self.angular_vel = np.clip(self.angular_vel, -50.0, 50.0)
         self.angles += self.angular_vel * dt
+        self.angles = np.clip(self.angles, -np.pi, np.pi)
 
     def copy(self) -> "RigidSegmentChain":
         clone = RigidSegmentChain(params=self.params)
