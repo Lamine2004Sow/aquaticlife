@@ -1,6 +1,9 @@
 # Simple workflow helpers for the aquaticlife project
 
 VENV ?= .venv
+# System interpreter used to create the venv (python3 is present even when "python" is absent)
+SYS_PY ?= python3
+# Interpreter inside the venv
 PYTHON := $(VENV)/bin/python
 
 .PHONY: help venv install evolve train test clean
@@ -15,7 +18,7 @@ help:
 	@echo "  make clean     - remove caches and runs"
 
 venv:
-	python -m venv $(VENV)
+	$(SYS_PY) -m venv $(VENV)
 
 install: venv
 	$(PYTHON) -m pip install --upgrade pip
